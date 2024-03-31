@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Box, Heading, Text, Button, Grid, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure, FormControl, FormLabel, Input, Image, useToast } from "@chakra-ui/react";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 
-const API_URL = "https://kvdb.io/N7cmQg1DwZbADh2Hu3NncF/";
+const API_URL = "https://kvdb.io/BLbtbuWvN1B5uCxdV8Nzk6/hello";
 
 const Index = () => {
   const [jobs, setJobs] = useState([]);
