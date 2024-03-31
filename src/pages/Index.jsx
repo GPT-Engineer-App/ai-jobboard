@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Box, Heading, Text, Button, Grid, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure, FormControl, FormLabel, Input, Image, useToast } from "@chakra-ui/react";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 
-const API_URL = "https://kvdb.io/BLbtbuWvN1B5uCxdV8Nzk6/hello";
+const API_URL = "https://kvdb.io/BLbtbuWvN1B5uCxdV8Nzk6/jobs:";
 
 const Index = () => {
   const [jobs, setJobs] = useState([]);
@@ -18,13 +18,13 @@ const Index = () => {
   }, []);
 
   const fetchJobs = async () => {
-    const res = await fetch(`${API_URL}?limit=1000`, {
+    const res = await fetch(`${API_URL}?prefix=jobs:&limit=1000`, {
       headers: {
         Authorization: "Basic " + btoa("legal:"),
       },
     });
     const data = await res.json();
-    const jobPromises = data.map((key) => fetch(`${API_URL}${key}`));
+    const jobPromises = data.map((key) => fetch(`${API_URL}${key.slice(5)}`));
     const jobResponses = await Promise.all(jobPromises);
     const jobs = await Promise.all(jobResponses.map((res) => res.json()));
     setJobs(jobs);
@@ -34,7 +34,7 @@ const Index = () => {
     e.preventDefault();
     const job = { title, description, url };
     if (editingJob) {
-      await fetch(`${API_URL}${editingJob}`, {
+      await fetch(`${API_URL}${editingJob.slice(5)}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -43,7 +43,8 @@ const Index = () => {
       });
       setEditingJob(null);
     } else {
-      await fetch(API_URL, {
+      const newJobId = `jobs:${Date.now()}`;
+      await fetch(`${API_URL}${newJobId.slice(5)}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -65,7 +66,7 @@ const Index = () => {
   };
 
   const handleEdit = (job) => {
-    setEditingJob(job.key);
+    setEditingJob(`jobs:${job.key}`);
     setTitle(job.title);
     setDescription(job.description);
     setUrl(job.url);
@@ -73,7 +74,7 @@ const Index = () => {
   };
 
   const handleDelete = async (key) => {
-    await fetch(`${API_URL}${key}`, { method: "DELETE" });
+    await fetch(`${API_URL}${key.slice(5)}`, { method: "DELETE" });
     fetchJobs();
     toast({
       title: "Job Deleted",
